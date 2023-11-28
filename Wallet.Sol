@@ -1,0 +1,37 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.22;
+
+contract MyEtherWallet {
+    address private owner;
+    uint256 public balance;
+
+    event Deposit(address indexed account, uint256 amount);
+    event Withdrawal(address indexed account, uint256 amount);
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+
+    constructor() {
+        owner = msg.sender;
+        balance = 0;
+    }
+
+    function deposit(uint256 amount) public {
+        require(amount > 0, "Invalid amount");
+        balance += amount;
+        emit Deposit(msg.sender, amount);
+    }
+
+    function withdraw(uint256 amount) public onlyOwner {
+        require(amount > 0, "Invalid amount");
+        require(balance >= amount, "Insufficient balance");
+        balance -= amount;
+        emit Withdrawal(msg.sender, amount);
+    }
+
+    function getBalance() public view returns (uint256) {
+        return balance;
+    }
+}
